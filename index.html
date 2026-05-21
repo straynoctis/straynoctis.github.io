@@ -335,6 +335,33 @@ body::after {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-8px); }
 }
+
+@media (max-width: 480px) {
+  .stage {
+    width: 240px;
+    height: 240px;
+    margin-bottom: 1.2rem;
+  }
+  .ring-mid  { inset: 18px; }
+  .ring-inner{ inset: 40px; }
+  .glow { width: 105px; height: 105px; }
+
+  .orbits-outer .orbit-item:nth-child(1) { top: -17px;                left: calc(50% - 17px); }
+  .orbits-outer .orbit-item:nth-child(2) { top: calc(50% - 90px);     right: -7px; }
+  .orbits-outer .orbit-item:nth-child(3) { bottom: calc(50% - 107px); right: 8px; }
+  .orbits-outer .orbit-item:nth-child(4) { bottom: calc(50% - 107px); left: 8px; }
+  .orbits-outer .orbit-item:nth-child(5) { top: calc(50% - 90px);     left: -7px; }
+
+  .king-wrap svg { width: 90px;  height: 90px; }
+  .center-icon   { width: 75px;  height: 75px; }
+
+  .page-name     { font-size: 1.8rem; letter-spacing: 0.15em; }
+  .section-label { font-size: 1.3rem; }
+  .section-desc  { font-size: 0.95rem; max-width: 300px; }
+
+  .art-grid { grid-template-columns: repeat(2, 1fr); max-width: 260px; }
+  .back-btn { top: 1rem; left: 1rem; }
+}
 </style>
 </head>
 <body>
