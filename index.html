@@ -26,6 +26,10 @@ html, body {
 }
 body.scrollable {
   overflow-y: auto;
+  height: auto;
+}
+body.scrollable html {
+  height: auto;
 }
 body.scrollable #page-section {
   position: relative;
@@ -578,6 +582,7 @@ body::after {
     document.getElementById('section-content').classList.add('visible');
     backBtn.classList.add('visible');
     document.body.classList.toggle('scrollable', key === 'art');
+    if (key === 'art') window.scrollTo(0, 0);
   }
 
   function goHome() {
@@ -589,30 +594,33 @@ body::after {
     window.scrollTo(0, 0);
   }
 
-  // Cursor-following tooltip
+  // Cursor-following tooltip (desktop only)
   const tooltip = document.getElementById('orbit-tooltip');
   let activeBtn = null;
+  const isTouch = window.matchMedia('(hover: none)').matches;
 
-  document.addEventListener('mousemove', e => {
-    if (activeBtn) {
-      tooltip.style.left = e.clientX + 'px';
-      tooltip.style.top = (e.clientY + 20) + 'px';
-    }
-  });
-  document.addEventListener('mouseover', e => {
-    const btn = e.target.closest('.orbit-item');
-    if (btn && btn.dataset.label) {
-      activeBtn = btn;
-      tooltip.textContent = btn.dataset.label;
-      tooltip.style.opacity = '1';
-    }
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest('.orbit-item')) {
-      activeBtn = null;
-      tooltip.style.opacity = '0';
-    }
-  });
+  if (!isTouch) {
+    document.addEventListener('mousemove', e => {
+      if (activeBtn) {
+        tooltip.style.left = e.clientX + 'px';
+        tooltip.style.top = (e.clientY + 20) + 'px';
+      }
+    });
+    document.addEventListener('mouseover', e => {
+      const btn = e.target.closest('.orbit-item');
+      if (btn && btn.dataset.label) {
+        activeBtn = btn;
+        tooltip.textContent = btn.dataset.label;
+        tooltip.style.opacity = '1';
+      }
+    });
+    document.addEventListener('mouseout', e => {
+      if (e.target.closest('.orbit-item')) {
+        activeBtn = null;
+        tooltip.style.opacity = '0';
+      }
+    });
+  }
 
   // Language cycler
   const langs = ["Python", "GDScript"];
