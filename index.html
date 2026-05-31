@@ -34,6 +34,12 @@ body.in-section {
 body.in-section #page-section {
   position: relative;
   min-height: 100vh;
+  will-change: transform;
+}
+@media (max-width: 768px) {
+  body.in-section::before,
+  body.in-section::after,
+  body.in-section #vignette { display: none; }
 }
 
 /* Grain */
@@ -582,7 +588,7 @@ body::after {
     document.getElementById('section-content').classList.add('visible');
     backBtn.classList.add('visible');
     document.body.classList.add('in-section');
-    if (key === 'art') window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
   }
 
   function goHome() {
@@ -591,6 +597,7 @@ body::after {
     homeEl.classList.add('active');
     backBtn.classList.remove('visible');
     document.body.classList.remove('in-section');
+    window.scrollTo(0, 0);
     window.scrollTo(0, 0);
   }
 
