@@ -597,9 +597,10 @@ body::after {
   // Cursor-following tooltip (desktop only)
   const tooltip = document.getElementById('orbit-tooltip');
   let activeBtn = null;
-  const isTouch = window.matchMedia('(hover: none)').matches;
+  let isTouchDevice = false;
+  window.addEventListener('touchstart', () => { isTouchDevice = true; }, { once: true });
 
-  if (!isTouch) {
+  if (true) {
     document.addEventListener('mousemove', e => {
       if (activeBtn) {
         tooltip.style.left = e.clientX + 'px';
@@ -607,6 +608,7 @@ body::after {
       }
     });
     document.addEventListener('mouseover', e => {
+      if (isTouchDevice) return;
       const btn = e.target.closest('.orbit-item');
       if (btn && btn.dataset.label) {
         activeBtn = btn;
@@ -615,6 +617,7 @@ body::after {
       }
     });
     document.addEventListener('mouseout', e => {
+      if (isTouchDevice) return;
       if (e.target.closest('.orbit-item')) {
         activeBtn = null;
         tooltip.style.opacity = '0';
