@@ -17,21 +17,21 @@
   --white: #f5f0e8;
 }
 
-html, body {
+html {
+  height: 100%;
+}
+body {
   height: 100%;
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: 'EB Garamond', Georgia, serif;
 }
-body.scrollable {
+body.in-section {
   overflow-y: auto;
   height: auto;
 }
-body.scrollable html {
-  height: auto;
-}
-body.scrollable #page-section {
+body.in-section #page-section {
   position: relative;
   min-height: 100vh;
 }
@@ -581,7 +581,7 @@ body::after {
     sectionEl.classList.add('active');
     document.getElementById('section-content').classList.add('visible');
     backBtn.classList.add('visible');
-    document.body.classList.toggle('scrollable', key === 'art');
+    document.body.classList.add('in-section');
     if (key === 'art') window.scrollTo(0, 0);
   }
 
@@ -590,17 +590,16 @@ body::after {
     document.getElementById('section-content').classList.remove('visible');
     homeEl.classList.add('active');
     backBtn.classList.remove('visible');
-    document.body.classList.remove('scrollable');
+    document.body.classList.remove('in-section');
     window.scrollTo(0, 0);
   }
 
   // Cursor-following tooltip (desktop only)
   const tooltip = document.getElementById('orbit-tooltip');
   let activeBtn = null;
-  let isTouchDevice = false;
-  window.addEventListener('touchstart', () => { isTouchDevice = true; }, { once: true });
+  const isTouch = window.matchMedia('(hover: none)').matches;
 
-  if (true) {
+  if (!isTouch) {
     document.addEventListener('mousemove', e => {
       if (activeBtn) {
         tooltip.style.left = e.clientX + 'px';
@@ -608,7 +607,6 @@ body::after {
       }
     });
     document.addEventListener('mouseover', e => {
-      if (isTouchDevice) return;
       const btn = e.target.closest('.orbit-item');
       if (btn && btn.dataset.label) {
         activeBtn = btn;
@@ -617,7 +615,6 @@ body::after {
       }
     });
     document.addEventListener('mouseout', e => {
-      if (isTouchDevice) return;
       if (e.target.closest('.orbit-item')) {
         activeBtn = null;
         tooltip.style.opacity = '0';
