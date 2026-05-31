@@ -588,12 +588,14 @@ body::after {
   const backBtn   = document.getElementById('backBtn');
 
   // Chess move sound
-  const moveSound = new Audio('Move.ogg');
-  moveSound.volume = 0.6;
-
+  let moveSound = null;
   function playMove() {
+    if (!moveSound) {
+      moveSound = new Audio('Move.ogg');
+      moveSound.volume = 0.6;
+    }
     moveSound.currentTime = 0;
-    moveSound.play().catch(() => {});
+    moveSound.play().catch(e => console.log('Audio error:', e));
   }
 
   // Scroll indicator — only show on mobile when section has scrollable content
