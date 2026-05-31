@@ -184,6 +184,21 @@ body::after {
 /* Counter-rotate so icons stay upright */
 .orbit-item svg { animation: spinRev 20s linear infinite; }
 
+/* Tooltip */
+#orbit-tooltip {
+  position: fixed;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, 0);
+}
+
 /* ── Center pieces ── */
 .king-wrap {
   position: relative;
@@ -367,6 +382,7 @@ body::after {
 <body>
 
 <div id="vignette"></div>
+<div id="orbit-tooltip"></div>
 <button class="back-btn" id="backBtn" onclick="goHome()">Home</button>
 
 <!-- Hidden SVG symbols -->
@@ -409,11 +425,11 @@ body::after {
 
     <!-- 5 icons on outer ring: gamedev, writing, art, coding, chess -->
     <div class="orbits-outer">
-      <button class="orbit-item" onclick="goTo('gamedev')" title="Game Dev"><svg><use href="#ico-gamedev"/></svg></button>
-      <button class="orbit-item" onclick="goTo('writing')"  title="Writing" ><svg><use href="#ico-writing"/></svg></button>
-      <button class="orbit-item" onclick="goTo('art')"      title="Art"     ><svg><use href="#ico-art"/></svg></button>
-      <button class="orbit-item" onclick="goTo('coding')"   title="Coding"  ><svg><use href="#ico-coding"/></svg></button>
-      <button class="orbit-item" onclick="goTo('chess')"    title="Chess"   ><svg><use href="#ico-chess"/></svg></button>
+      <button class="orbit-item" data-label="GAME DEV" onclick="goTo('gamedev')" title="Game Dev"><svg><use href="#ico-gamedev"/></svg></button>
+      <button class="orbit-item" data-label="WRITING"  onclick="goTo('writing')"  title="Writing" ><svg><use href="#ico-writing"/></svg></button>
+      <button class="orbit-item" data-label="ART"      onclick="goTo('art')"      title="Art"     ><svg><use href="#ico-art"/></svg></button>
+      <button class="orbit-item" data-label="CODING"   onclick="goTo('coding')"   title="Coding"  ><svg><use href="#ico-coding"/></svg></button>
+      <button class="orbit-item" data-label="CHESS"    onclick="goTo('chess')"    title="Chess"   ><svg><use href="#ico-chess"/></svg></button>
     </div>
 
     <!-- King always center on home -->
@@ -457,8 +473,8 @@ body::after {
     </div>
   </div>
 
-  <div class="section-content visible" id="section-content">
-    <h2 class="section-label" id="section-title">GAME <span>DEV</span></h2>
+  <div class="section-content" id="section-content">
+    <h2 class="section-label" id="section-title"><span>GAME DEV</span></h2>
     <p class="section-desc" id="section-desc">…</p>
     <div class="divider"></div>
     <!-- Art grid only shown for art section -->
@@ -478,7 +494,7 @@ body::after {
   const sections = {
     gamedev: {
       icon: '#ico-gamedev',
-      title: 'GAME <span>DEV</span>',
+      title: '<span>GAME DEV</span>',
       desc: 'Crafting worlds where players lose themselves. Every game is a universe with its own laws — mechanics, narrative, and feel woven into one.',
       art: false,
     },
@@ -535,6 +551,7 @@ body::after {
       const btn = document.createElement('button');
       btn.className = 'orbit-item';
       btn.title = k;
+      btn.dataset.label = k.toUpperCase().replace('GAMEDEV', 'GAME DEV');
       btn.innerHTML = `<svg><use href="${sections[k].icon}"/></svg>`;
       btn.onclick = () => goTo(k);
       orbitsEl.appendChild(btn);
@@ -543,6 +560,7 @@ body::after {
     const homeBtn = document.createElement('button');
     homeBtn.className = 'orbit-item';
     homeBtn.title = 'Home';
+    homeBtn.dataset.label = 'HOME';
     homeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
     homeBtn.onclick = goHome;
     orbitsEl.appendChild(homeBtn);
@@ -550,14 +568,41 @@ body::after {
     // Fade home out, section in
     homeEl.classList.remove('active');
     sectionEl.classList.add('active');
+    document.getElementById('section-content').classList.add('visible');
     backBtn.classList.add('visible');
   }
 
   function goHome() {
     sectionEl.classList.remove('active');
+    document.getElementById('section-content').classList.remove('visible');
     homeEl.classList.add('active');
     backBtn.classList.remove('visible');
   }
+
+  // Cursor-following tooltip
+  const tooltip = document.getElementById('orbit-tooltip');
+  let activeBtn = null;
+
+  document.addEventListener('mousemove', e => {
+    if (activeBtn) {
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = (e.clientY + 20) + 'px';
+    }
+  });
+  document.addEventListener('mouseover', e => {
+    const btn = e.target.closest('.orbit-item');
+    if (btn && btn.dataset.label) {
+      activeBtn = btn;
+      tooltip.textContent = btn.dataset.label;
+      tooltip.style.opacity = '1';
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest('.orbit-item')) {
+      activeBtn = null;
+      tooltip.style.opacity = '0';
+    }
+  });
 
   // Language cycler
   const langs = ["Python", "GDScript"];
