@@ -75,6 +75,11 @@ body::after {
   z-index: 1;
 }
 
+@media (max-width: 768px) {
+  body::before, body::after { display: none; }
+  #vignette { display: none; }
+}
+
 /* ── Page system ── */
 .page {
   position: fixed;
