@@ -24,6 +24,13 @@ html, body {
   color: var(--text);
   font-family: 'EB Garamond', Georgia, serif;
 }
+body.scrollable {
+  overflow-y: auto;
+}
+body.scrollable #page-section {
+  position: relative;
+  min-height: 100vh;
+}
 
 /* Grain */
 body::before {
@@ -570,6 +577,7 @@ body::after {
     sectionEl.classList.add('active');
     document.getElementById('section-content').classList.add('visible');
     backBtn.classList.add('visible');
+    document.body.classList.toggle('scrollable', key === 'art');
   }
 
   function goHome() {
@@ -577,6 +585,8 @@ body::after {
     document.getElementById('section-content').classList.remove('visible');
     homeEl.classList.add('active');
     backBtn.classList.remove('visible');
+    document.body.classList.remove('scrollable');
+    window.scrollTo(0, 0);
   }
 
   // Cursor-following tooltip
