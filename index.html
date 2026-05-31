@@ -316,6 +316,37 @@ body::after {
   margin: 1.2rem auto 0;
 }
 
+/* Scroll indicator */
+.scroll-indicator {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2rem;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  cursor: default;
+}
+.scroll-indicator.visible { opacity: 1; }
+.scroll-indicator span {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+.scroll-arrow {
+  width: 12px;
+  height: 12px;
+  border-right: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  transform: rotate(45deg);
+  animation: arrowBounce 1.5s ease-in-out infinite;
+}
+@keyframes arrowBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.4; }
+  50%       { transform: rotate(45deg) translateY(4px); opacity: 1; }
+}
+
 /* Back button */
 .back-btn {
   position: fixed;
@@ -499,6 +530,10 @@ body::after {
     <h2 class="section-label" id="section-title"><span>GAME DEV</span></h2>
     <p class="section-desc" id="section-desc">…</p>
     <div class="divider"></div>
+    <div class="scroll-indicator" id="scroll-indicator">
+      <span>SCROLL</span>
+      <div class="scroll-arrow"></div>
+    </div>
     <!-- Art grid only shown for art section -->
     <div class="art-grid" id="art-grid" style="display:none">
       <div class="art-slot"><svg width="28" height="28"><use href="#ico-image"/></svg></div>
@@ -552,6 +587,34 @@ body::after {
   const sectionEl = document.getElementById('page-section');
   const backBtn   = document.getElementById('backBtn');
 
+  // Chess move sound
+  const moveSound = new Audio('Move.ogg');
+  moveSound.volume = 0.6;
+
+  function playMove() {
+    moveSound.currentTime = 0;
+    moveSound.play().catch(() => {});
+  }
+
+  // Scroll indicator — only show on mobile when section has scrollable content
+  function updateScrollIndicator(key) {
+    const indicator = document.getElementById('scroll-indicator');
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile && (key === 'art')) {
+      indicator.style.display = 'flex';
+      setTimeout(() => indicator.classList.add('visible'), 100);
+      // Hide after user scrolls
+      const hideOnScroll = () => {
+        indicator.classList.remove('visible');
+        window.removeEventListener('scroll', hideOnScroll);
+      };
+      window.addEventListener('scroll', hideOnScroll);
+    } else {
+      indicator.style.display = 'none';
+      indicator.classList.remove('visible');
+    }
+  }
+
   function goTo(key) {
     const data = sections[key];
 
@@ -594,6 +657,8 @@ body::after {
     backBtn.classList.add('visible');
     document.body.classList.add('in-section');
     window.scrollTo(0, 0);
+    playMove();
+    updateScrollIndicator(key);
   }
 
   function goHome() {
@@ -603,6 +668,8 @@ body::after {
     backBtn.classList.remove('visible');
     document.body.classList.remove('in-section');
     window.scrollTo(0, 0);
+    document.getElementById('scroll-indicator').style.display = 'none';
+    playMove();
     window.scrollTo(0, 0);
   }
 
